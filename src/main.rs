@@ -11,6 +11,9 @@ pub const WINDOW_TITLE: &str = "Bevy Boids";
 pub const WINDOW_WIDTH: f32 = 1280.0;
 pub const WINDOW_HEIGHT: f32 = 720.0;
 
+#[derive(Component, Debug)]
+pub struct GameCamera;
+
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins.set(WindowPlugin {
@@ -24,11 +27,16 @@ fn main() {
         }))
         .insert_resource(ClearColor(Color::ANTIQUE_WHITE))
         .add_systems(Startup, setup)
-        .add_systems(Update, (update_position, sync_position).chain())
-        .add_systems(Update, spawn_boid_on_mouseclick)
+        .add_systems(
+            Update,
+            (
+                (update_position, sync_position).chain(),
+                spawn_boid_on_mouseclick,
+            ),
+        )
         .run();
 }
 
 fn setup(mut commands: Commands) {
-    commands.spawn(Camera2dBundle::default());
+    commands.spawn((Camera2dBundle::default(), GameCamera));
 }
