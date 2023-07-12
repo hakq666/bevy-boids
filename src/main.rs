@@ -4,6 +4,7 @@ mod movement;
 use bevy::prelude::*;
 use bevy::window::PresentMode;
 
+use crate::boid::spawn_boid_on_mouseclick;
 use crate::movement::{sync_position, update_position};
 
 pub const WINDOW_TITLE: &str = "Bevy Boids";
@@ -21,8 +22,10 @@ fn main() {
             }),
             ..default()
         }))
+        .insert_resource(ClearColor(Color::ANTIQUE_WHITE))
         .add_systems(Startup, setup)
         .add_systems(Update, (update_position, sync_position).chain())
+        .add_systems(Update, spawn_boid_on_mouseclick)
         .run();
 }
 
