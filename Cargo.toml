@@ -8,7 +8,7 @@ readme = "README.md"
 license = "MIT"
 
 [dependencies]
-bevy = { version = "0.11.0", features = ["dynamic_linking"] }
+bevy = { version = "0.11.0", features = ["dynamic_linking", "wayland"] }
 
 # Enable a small amount of optimization in debug mode
 [profile.dev]
