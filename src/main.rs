@@ -1,3 +1,4 @@
+mod boid;
 mod movement;
 
 use bevy::prelude::*;
@@ -20,6 +21,11 @@ fn main() {
             }),
             ..default()
         }))
+        .add_systems(Startup, setup)
         .add_systems(Update, (update_position, sync_position).chain())
         .run();
+}
+
+fn setup(mut commands: Commands) {
+    commands.spawn(Camera2dBundle::default());
 }
