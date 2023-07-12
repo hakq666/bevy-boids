@@ -1,5 +1,6 @@
 mod boid;
 mod movement;
+mod spatial_grid;
 
 use bevy::prelude::*;
 use bevy::window::PresentMode;
