@@ -2,7 +2,8 @@ use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 
 use crate::movement::{Position, Velocity};
-use crate::GameCamera;
+use crate::spatial_grid::{Grid, SquareQuery};
+use crate::{GameCamera, GameSettings};
 
 #[derive(Component, Debug)]
 pub struct Boid;
@@ -49,6 +50,27 @@ pub fn spawn_boid_on_mouseclick(
             };
 
             spawn_boid(world_position, Vec2::ZERO, &mut commands);
+        }
+    }
+}
+
+fn flock(
+    mut query: Query<(Entity, &Position, &mut Velocity), With<Boid>>,
+    spatial_grid: Res<Grid>,
+    game_settings: Res<GameSettings>,
+) {
+    for (entity, position, mut velocity) in &query {
+        let neighbors_query = SquareQuery::new(position.0, game_settings.visual_range);
+
+        let mut perceived_flock_velocity = Vec2::ZERO;
+        let mut perceived_flock_position = Vec2::ZERO;
+
+        for (neighbor_entity, neighbor_position) in spatial_grid.query(neighbors_query) {
+            if entity == neighbor_entity {
+                continue;
+            }
+
+            todo!()
         }
     }
 }

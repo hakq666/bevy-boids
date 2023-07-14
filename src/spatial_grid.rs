@@ -4,15 +4,12 @@ use bevy::prelude::*;
 use bevy::utils::HashMap;
 use bevy::window::{PrimaryWindow, WindowResized};
 
-use crate::boid::Boid;
-use crate::movement::Position;
-
 pub const CELL_SIZE: f32 = 30.;
 
-type GridId = u32;
+pub type GridId = u32;
 
 #[derive(Debug, Clone, Copy)]
-struct GridInfo {
+pub struct GridInfo {
     cell_size: f32,
     grid_dimensions: UVec2,
 }
@@ -42,20 +39,20 @@ impl GridInfo {
 }
 
 // https://leetless.de/posts/spatial-hashing-vs-ecs/
-trait GridQuery: Debug {
+pub trait GridQuery: Debug {
     fn first_cell(&self, grid_info: GridInfo) -> GridId;
     fn next_cell(&self, grid_id: GridId, grid_info: GridInfo) -> Option<GridId>;
     fn in_range(&self, position: Vec2) -> bool;
 }
 
 #[derive(Debug, Default)]
-struct SquareQuery {
+pub struct SquareQuery {
     center: Vec2,
     radius: f32,
 }
 
 impl SquareQuery {
-    fn new(center: Vec2, radius: f32) -> Self {
+    pub fn new(center: Vec2, radius: f32) -> Self {
         Self { center, radius }
     }
 }
@@ -98,7 +95,7 @@ impl GridQuery for SquareQuery {
 }
 
 #[derive(Debug)]
-struct GridIterator<'a, Q: GridQuery> {
+pub struct GridIterator<'a, Q: GridQuery> {
     query: Q,
     current_cell: GridId,
     entity_iterator: Option<bevy::utils::hashbrown::hash_map::Iter<'a, Entity, Vec2>>,
