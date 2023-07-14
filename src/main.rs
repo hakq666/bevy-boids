@@ -4,6 +4,7 @@ mod spatial_grid;
 
 use bevy::prelude::*;
 use bevy::window::PresentMode;
+use spatial_grid::{Grid, update_grid_dimensions_on_window_resize};
 
 use crate::boid::spawn_boid_on_mouseclick;
 use crate::movement::{sync_position, update_position};
@@ -27,12 +28,14 @@ fn main() {
             ..default()
         }))
         .insert_resource(ClearColor(Color::ANTIQUE_WHITE))
+        .init_resource::<Grid>()
         .add_systems(Startup, setup)
         .add_systems(
             Update,
             (
                 (update_position, sync_position).chain(),
                 spawn_boid_on_mouseclick,
+                update_grid_dimensions_on_window_resize,
             ),
         )
         .run();

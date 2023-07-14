@@ -2,9 +2,12 @@ use std::fmt::Debug;
 
 use bevy::prelude::*;
 use bevy::utils::HashMap;
+use bevy::window::{PrimaryWindow, WindowResized};
 
 use crate::boid::Boid;
 use crate::movement::Position;
+
+pub const CELL_SIZE: f32 = 30.;
 
 type GridId = u32;
 
@@ -31,6 +34,10 @@ impl GridInfo {
 
     fn get_grid_id_y(&self, grid_id: GridId) -> u32 {
         grid_id % self.grid_dimensions.x
+    }
+
+    fn update_grid_dimensions(&mut self, new_grid_dimensions: UVec2) {
+        self.grid_dimensions = new_grid_dimensions;
     }
 }
 
@@ -133,6 +140,16 @@ pub struct Grid {
     hash_grid: HashMap<GridId, HashMap<Entity, Vec2>>,
 }
 
+impl FromWorld for Grid {
+    fn from_world(world: &mut World) -> Self {
+        let window = world
+            .query::<(&Window, With<PrimaryWindow>)>()
+            .single(world);
+
+        Self::new(Vec2::new(window.0.width(), window.0.height()), CELL_SIZE)
+    }
+}
+
 impl Grid {
     fn new(workspace_dimensions: Vec2, cell_size: f32) -> Self {
         let (grid_dimensions_x, grid_dimensions_y) = (
@@ -196,5 +213,24 @@ impl Grid {
             hash_grid: &self.hash_grid,
             grid_info: self.grid_info,
         }
+    }
+
+    fn update_grid_dimensions(&mut self, new_workspace_dimensions: Vec2) {
+        let (grid_dimensions_x, grid_dimensions_y) = (
+            (new_workspace_dimensions.x / self.grid_info.cell_size).ceil() as u32,
+            (new_workspace_dimensions.y / self.grid_info.cell_size).ceil() as u32,
+        );
+
+        self.grid_info
+            .update_grid_dimensions(UVec2::new(grid_dimensions_x, grid_dimensions_y));
+    }
+}
+
+pub fn update_grid_dimensions_on_window_resize(
+    mut spatial_grid: ResMut<Grid>,
+    mut window_resize_events: EventReader<WindowResized>,
+) {
+    for e in window_resize_events.iter() {
+        spatial_grid.update_grid_dimensions(Vec2::new(e.width, e.height));
     }
 }
