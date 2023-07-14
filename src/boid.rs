@@ -49,7 +49,6 @@ pub fn spawn_boid_on_mouseclick(
             };
 
             spawn_boid(world_position, Vec2::ZERO, &mut commands);
-            dbg!(world_position);
         }
     }
 }

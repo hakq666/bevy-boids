@@ -4,10 +4,10 @@ mod spatial_grid;
 
 use bevy::prelude::*;
 use bevy::window::PresentMode;
-use spatial_grid::{Grid, update_grid_dimensions_on_window_resize};
 
 use crate::boid::spawn_boid_on_mouseclick;
 use crate::movement::{sync_position, update_position};
+use crate::spatial_grid::{update_grid_dimensions_on_window_resize, Grid};
 
 pub const WINDOW_TITLE: &str = "Bevy Boids";
 pub const WINDOW_WIDTH: f32 = 1280.0;
