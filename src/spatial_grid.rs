@@ -161,6 +161,24 @@ impl Grid {
         });
     }
 
+    pub fn update(&mut self, entity: Entity, previous_position: Vec2, new_position: Vec2) {
+        let previous_position_grid_id = self.grid_info.get_grid_id(previous_position);
+        let new_position_grid_id = self.grid_info.get_grid_id(new_position);
+
+        if previous_position_grid_id != new_position_grid_id {
+            self.hash_grid
+                .entry(previous_position_grid_id)
+                .and_modify(|hash_map| {
+                    hash_map.remove(&entity);
+                });
+        }
+
+        self.hash_grid
+            .entry(new_position_grid_id)
+            .or_default()
+            .insert(entity, new_position);
+    }
+
     pub fn clear(&mut self) {
         self.hash_grid.clear();
     }
