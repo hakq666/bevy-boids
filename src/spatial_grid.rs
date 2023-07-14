@@ -28,6 +28,10 @@ impl GridInfo {
         (position.x * conversion_factor
             + position.y * conversion_factor * self.grid_dimensions.x as f32) as u32
     }
+
+    fn get_grid_id_y(&self, grid_id: GridId) -> u32 {
+        grid_id % self.grid_dimensions.x
+    }
 }
 
 // https://leetless.de/posts/spatial-hashing-vs-ecs/
@@ -54,10 +58,29 @@ impl GridQuery for SquareQuery {
         grid_info.get_grid_id(self.center - Vec2::splat(self.radius))
     }
 
-    fn next_cell(&self, grid_id: GridId, grid_info: GridInfo) -> Option<GridId> {
+    fn next_cell(&self, mut grid_id: GridId, grid_info: GridInfo) -> Option<GridId> {
         let max_grid_id = grid_info.grid_dimensions.x * grid_info.grid_dimensions.y - 1;
 
-        todo!()
+        if grid_id == max_grid_id - 1 {
+            return None;
+        }
+
+        if grid_info.get_grid_id_y(grid_id) as f32 * grid_info.cell_size
+            > self.center.x + self.radius
+        {
+            grid_id = grid_info.get_grid_id(Vec2::new(
+                self.center.x - self.radius,
+                grid_info.get_grid_id_y(grid_id) as f32 * grid_info.cell_size,
+            ));
+        }
+
+        if grid_info.get_grid_id_y(grid_id) as f32 * grid_info.cell_size
+            > self.center.y + self.radius
+        {
+            return None;
+        }
+
+        Some(grid_id)
     }
     fn in_range(&self, position: Vec2) -> bool {
         position.x >= self.center.x - self.radius
