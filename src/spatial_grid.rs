@@ -198,10 +198,3 @@ impl Grid {
         }
     }
 }
-
-pub fn update_grid(query: Query<(Entity, &Position), With<Boid>>, mut grid: ResMut<Grid>) {
-    for (entity, position) in &query {
-        grid.clear();
-        grid.insert(entity, position.0);
-    }
-}
